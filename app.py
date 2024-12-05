@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 from config import load_config
 
 
-REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password) VALUES (%s, %s, %s) RETURNING user_id"
+REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_adress) VALUES (%s, %s, %s, %s) RETURNING user_id"
 GET_USER_BY_EMAIL = "SELECT * FROM users WHERE user_email = %s"
 load_dotenv()
 
@@ -35,12 +35,20 @@ def register_user():
     user_name = data["user_name"]
     user_email = data["user_email"]
     user_password = data["user_password"]
+    user_adress = data["user_adress"]
 
     hashed_password = bcrypt.hashpw(user_password.encode('utf8'), bcrypt.gensalt()).decode('utf-8')
-
+    #add checking for email
+    
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(REGISTER_USER, (user_name, user_email, hashed_password))
+            cursor.execute(GET_USER_BY_EMAIL, (user_email,))
+            email_exists = cursor.fetchone()
+
+            if email_exists:
+                 return {"error": "Email already exists. Please use a different email."}, 400
+
+            cursor.execute(REGISTER_USER, (user_name, user_email, hashed_password, user_adress))
             user_id = cursor.fetchone()[0]
     return {"id": user_id, "Message": f"User  {user_name} created."}, 201
 
@@ -70,4 +78,22 @@ def login_user():
         else:
             return jsonify({"error": "Invalid credentials"}), 401
        
+
+@app.post("/api/getUserInfo")
+def get_user_info():
+    data = request.get_json()
+    user_email = data["user_email"]
+
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(GET_USER_BY_EMAIL, (user_email,))
+            user = cursor.fetchone()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    else:
+        user_name = user[1]
+        user_adress = user[4]
+        return jsonify ({"user_name": user_name, "adress": user_adress})
 
