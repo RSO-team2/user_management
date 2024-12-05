@@ -1,3 +1,7 @@
 .env
 config.py
 __pycache__
+venv
+database.ini
+.flaskenv
+database_manipulation.py
