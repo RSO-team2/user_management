@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 
 
-REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_adress) VALUES (%s, %s, %s, %s) RETURNING user_id"
+REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_address, user_type) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
 GET_USER_BY_EMAIL = "SELECT * FROM users WHERE user_email = %s"
 load_dotenv()
 
@@ -18,7 +18,8 @@ def register_user():
     user_name = data["user_name"]
     user_email = data["user_email"]
     user_password = data["user_password"]
-    user_adress = data["user_adress"]
+    user_address = data["user_address"]
+    user_type = data["user_type"]
 
     hashed_password = bcrypt.hashpw(
         user_password.encode("utf8"), bcrypt.gensalt()
@@ -36,7 +37,7 @@ def register_user():
                 }, 400
 
             cursor.execute(
-                REGISTER_USER, (user_name, user_email, hashed_password, user_adress)
+                REGISTER_USER, (user_name, user_email, hashed_password, user_address, user_type)
             )
             user_id = cursor.fetchone()[0]
     return {"id": user_id, "Message": f"User  {user_name} created."}, 201
@@ -90,8 +91,8 @@ def get_user_info():
 
     else:
         user_name = user[1]
-        user_adress = user[4]
-        return jsonify({"user_name": user_name, "adress": user_adress})
+        user_address = user[4]
+        return jsonify({"user_name": user_name, "adress": user_address})
 
 
 if __name__ == "__main__":
