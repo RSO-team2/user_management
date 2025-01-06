@@ -4,7 +4,7 @@ import psycopg2
 import bcrypt
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token
+#from flask_jwt_extended import JWTManager, create_access_token
 
 from config import load_config
 
@@ -16,7 +16,7 @@ load_dotenv()
 app = Flask(__name__)
 #Hashing key
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "your_jwt_secret_key")  # JWT Secret Key
-jwt = JWTManager(app)
+#jwt = JWTManager(app)
 
 #database connection
 url = os.getenv("DATABASE_URL")
@@ -72,9 +72,9 @@ def login_user():
 
         if is_pass_matching:
             user_id = user[0]  
-            access_token = create_access_token(identity=user_id)
+            #access_token = create_access_token(identity=user_id)
 
-            return jsonify({"token": access_token, "message": "Login successful"}), 200
+            return jsonify({"message": "Login successful"}), 200
         else:
             return jsonify({"error": "Invalid credentials"}), 401
        

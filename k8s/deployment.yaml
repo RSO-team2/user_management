@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fun-food-times-user-management
+  labels:
+    app: fun-food-times-user-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fun-food-times-user-management
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: fun-food-times-user-management
+    spec:
+      containers:
+        - image: <IMAGE>
+          name: fun-food-times-user-management
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-url-secret
+                  key: DATABASE_URL
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fun-food-times-user-management-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: fun-food-times-user-management

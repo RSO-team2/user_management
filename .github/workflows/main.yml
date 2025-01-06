@@ -1,0 +1,57 @@
+on:
+    push:
+      branches:
+        - main
+      paths:
+        - 'api/**'
+        - 'k8s/**'
+        - 'setup.py'
+        - 'Dockerfile'
+        - '.github/workflows/**'
+      
+jobs:
+   build:
+     runs-on: ubuntu-latest
+     steps:
+      - name: Checkout master
+        uses: actions/checkout@main
+  
+      - name: Activate Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+        
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          
+      - name: Build container image
+        run: docker build -t ${{ secrets.REGISTRY_NAME }}/order_management:$(echo $GITHUB_SHA | head -c7) .
+      
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1800
+      
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ secrets.REGISTRY_NAME }}/order_management:$(echo $GITHUB_SHA | head -c7)
+        
+      - name: Update deployment file
+        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/order_management:'${TAG}'|' $GITHUB_WORKSPACE/k8s/deployment.yaml
+      
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 1800 ${{ secrets.CLUSTER_NAME }}
+  
+      - name: Create Kubernetes Secret
+        run: |
+            kubectl create secret generic database-url-secret \
+            --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }} --dry-run=client \
+            --output yaml | kubectl apply -f - --insecure-skip-tls-verify --validate=false
+      
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/deployment.yaml
+      
+      - name: Verify deployment
+        run: kubectl rollout status deployment/fun-food-times-order-management
+  
+  
+  
