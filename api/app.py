@@ -16,20 +16,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-async def handle_message(msg):
-    data = msg.data.decode('utf-8')
-    print(f"Received a new reservation")
-
-
-async def run_nats_subscription():
-    nc = NATS()
-    await nc.connect(servers=[" nats://nats.default.svc.cluster.local:4222"])
-    await nc.subscribe("reservation.created", cb=handle_message)
-
-    print("Listening for messages on 'reservation.created'...")
-    while True:
-        await asyncio.sleep(1)  # Keep the event loop running
-
 @app.post("/api/register")
 def register_user():
     data = request.get_json()
@@ -120,21 +106,5 @@ def get_user_info():
 
 
 if __name__ == "__main__":
-
-
-
-    def start_flask():
-        print("Starting Flask app...")
-        app.run(host="0.0.0.0", port=5001, use_reloader=False, debug=False)
-
-    async def main():
-        # Run the NATS subscription in an asyncio task
-        await run_nats_subscription()
-
-    # Start Flask in a separate thread
-    flask_thread = Thread(target=start_flask)
-    flask_thread.daemon = True
-    flask_thread.start()
-
-    # Run NATS subscription asynchronously
-    asyncio.run(main())
+    print("Starting app...")
+    app.run(host="0.0.0.0", port=5001)
