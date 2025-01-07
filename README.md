@@ -36,6 +36,6 @@ Service Completion Checklist
   - [x] READMEs (general documentation)
     - [x] Purpose
     - [ ] Use-cases
-  - [ ] CI/CD Pipeline
-  - [ ] Cloud deployment
+  - [x] CI/CD Pipeline
+  - [x] Cloud deployment
 

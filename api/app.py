@@ -92,7 +92,7 @@ def get_user_info():
     else:
         user_name = user[1]
         user_address = user[4]
-        return jsonify({"user_name": user_name, "adress": user_address})
+        return jsonify({"user_name": user_name, "address": user_address})
 
 
 if __name__ == "__main__":
