@@ -7,6 +7,8 @@ from flask import Flask, request, jsonify
 
 REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_address, user_type) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
 GET_USER_BY_EMAIL = "SELECT * FROM users WHERE user_email = %s"
+GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = %d"
+GET_USERT_TYPE_ID = "SELECT id FROM user_types WHERE type = %s"
 load_dotenv()
 
 app = Flask(__name__)
@@ -35,12 +37,18 @@ def register_user():
                 return {
                     "error": "Email already exists. Please use a different email."
                 }, 400
+            
+            cursor.execute(GET_USERT_TYPE_ID, (user_type,))
+            user_type = cursor.fetchone()[0]
+            if not user_type:
+                return {"error": "Invalid user type"}, 400
 
             cursor.execute(
-                REGISTER_USER, (user_name, user_email, hashed_password, user_address, user_type)
+                REGISTER_USER,
+                (user_name, user_email, hashed_password, user_address, user_type),
             )
             user_id = cursor.fetchone()[0]
-    return {"id": user_id, "Message": f"User  {user_name} created."}, 201
+    return jsonify({"user_id": user_id, "Message": f"User  {user_name} created."}), 201
 
 
 @app.post("/api/login")
@@ -66,10 +74,7 @@ def login_user():
         )
 
         if is_pass_matching:
-            user_id = user[0]
-            # access_token = create_access_token(identity=user_id)
-
-            return jsonify({"message": "Login successful"}), 200
+            return jsonify({"message": "Login successful", "user_id": user[0]}), 200
         else:
             return jsonify({"error": "Invalid credentials"}), 401
 
@@ -77,13 +82,13 @@ def login_user():
 @app.post("/api/getUserInfo")
 def get_user_info():
     data = request.get_json()
-    user_email = data["user_email"]
+    user_id = data["user_id"]
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
 
     with connection:
         with connection.cursor() as cursor:
-            cursor.execute(GET_USER_BY_EMAIL, (user_email,))
+            cursor.execute(GET_USER_BY_ID, (user_id,))
             user = cursor.fetchone()
 
     if not user:
@@ -91,8 +96,11 @@ def get_user_info():
 
     else:
         user_name = user[1]
+        user_email = user[2]
         user_address = user[4]
-        return jsonify({"user_name": user_name, "adress": user_address})
+        return jsonify(
+            {"user_name": user_name, "user_email": user_email, "adress": user_address}
+        )
 
 
 if __name__ == "__main__":
