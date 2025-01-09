@@ -1,9 +1,6 @@
 import os
 import psycopg2
 import bcrypt
-import asyncio
-from nats.aio.client import Client as NATS
-from threading import Thread
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
