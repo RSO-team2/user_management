@@ -30,18 +30,6 @@ spec:
                 secretKeyRef:
                   name: database-url-secret
                   key: DATABASE_URL
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /readiness
-              port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 10
 
 ---
 apiVersion: v1
