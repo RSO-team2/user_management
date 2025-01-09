@@ -3,6 +3,7 @@ import psycopg2
 import bcrypt
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 
 
 REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_address, user_type) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
@@ -12,9 +13,11 @@ GET_USERT_TYPE_ID = "SELECT id FROM user_types WHERE type = %s"
 load_dotenv()
 
 app = Flask(__name__)
+cors = CORS(app)
 
 
 @app.post("/api/register")
+@cross_origin()
 def register_user():
     data = request.get_json()
     user_name = data["user_name"]
@@ -52,6 +55,7 @@ def register_user():
 
 
 @app.post("/api/login")
+@cross_origin()
 def login_user():
     data = request.get_json()
     user_email = data["user_email"]
@@ -80,6 +84,7 @@ def login_user():
 
 
 @app.post("/api/getUserInfo")
+@cross_origin()
 def get_user_info():
     data = request.get_json()
     user_id = data["user_id"]
