@@ -1,6 +1,9 @@
 import os
 import psycopg2
 import bcrypt
+import asyncio
+from nats.aio.client import Client as NATS
+from threading import Thread
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
@@ -15,6 +18,29 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
+def check_database_connection():
+    try:
+        # Attempt to connect to the database
+        conn = psycopg2.connect("DATABASE_URL")
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        return False
+
+# Liveness endpoint: Basic check if the app is running
+@app.route('/healthz', methods=['GET'])
+def health_check():
+    return jsonify({"status": "alive"}), 200
+
+# Readiness endpoint: Checks if the service is ready to handle requests
+@app.route('/readiness', methods=['GET'])
+def readiness_check():
+    db_ready = check_database_connection()
+    if db_ready:
+        return jsonify({"status": "ready"}), 200
+    else:
+        return jsonify({"status": "not ready"}), 503
 
 @app.post("/api/register")
 @cross_origin()
