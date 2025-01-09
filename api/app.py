@@ -15,30 +15,6 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
-def check_database_connection():
-    try:
-        # Attempt to connect to the database
-        conn = psycopg2.connect("DATABASE_URL")
-        conn.close()
-        return True
-    except Exception as e:
-        print(f"Database connection error: {e}")
-        return False
-
-# Liveness endpoint: Basic check if the app is running
-@app.route('/healthz', methods=['GET'])
-def health_check():
-    return jsonify({"status": "alive"}), 200
-
-# Readiness endpoint: Checks if the service is ready to handle requests
-@app.route('/readiness', methods=['GET'])
-def readiness_check():
-    db_ready = check_database_connection()
-    if db_ready:
-        return jsonify({"status": "ready"}), 200
-    else:
-        return jsonify({"status": "not ready"}), 503
-
 @app.post("/api/register")
 @cross_origin()
 def register_user():
@@ -133,4 +109,4 @@ def get_user_info():
 
 if __name__ == "__main__":
     print("Starting app...")
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5000)
