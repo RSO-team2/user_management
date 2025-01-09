@@ -23,7 +23,7 @@ spec:
         - image: <IMAGE>
           name: fun-food-times-user-management
           ports:
-            - containerPort: 5001
+            - containerPort: 5000
           env:
             - name: DATABASE_URL
               valueFrom:
@@ -33,13 +33,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 5001
+              port: 5000
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /readiness
-              port: 5001
+              port: 5000
             initialDelaySeconds: 5
             periodSeconds: 10
 
@@ -47,13 +47,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-user-management-service
+  name: fun-food-times-lm
 spec:
   type: LoadBalancer
   ports:
     - name: http
-      port: 5001
+      port: 5000
       protocol: TCP
-      targetPort: 5001
+      targetPort: 5000
   selector:
     app: fun-food-times-user-management
