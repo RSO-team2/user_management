@@ -40,8 +40,8 @@ spec:
   type: LoadBalancer
   ports:
     - name: http
-      port: 5002
+      port: 5000
       protocol: TCP
-      targetPort: 5002
+      targetPort: 5000
   selector:
     app: fun-food-times-user-management
