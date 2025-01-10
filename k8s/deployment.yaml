@@ -52,10 +52,24 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: 
+    - host: <EXTERNAL-IP>
       http:
         paths:
-          - path: /fun-food-times-user-management
+          - path: /fun-food-times-user-management/api/login
+            pathType: Exact
+            backend:
+              service:
+                name: fun-food-times-user-management
+                port:
+                  number: 80
+          - path: /fun-food-times-user-management/api/register
+            pathType: Exact
+            backend:
+              service:
+                name: fun-food-times-user-management
+                port:
+                  number: 80
+          - path: /fun-food-times-user-management/api/getUserInfo
             pathType: Prefix
             backend:
               service:
