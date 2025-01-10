@@ -35,26 +35,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-user-management-service
+  name: fun-food-times-lm
 spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 5002
+      protocol: TCP
+      targetPort: 5002
   selector:
     app: fun-food-times-user-management
-  ports:
-    - protocol: TCP
-      port: 5000        
-      targetPort: 5000 
-  type: ClusterIP
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: api-loadbalancer
-spec:
-  selector: {}  # This is just a placeholder. The actual routing is done by the ports.
-  ports:
-    - protocol: TCP
-      port: 5000          # Port on the external LoadBalancer (this is what you'll access)
-      targetPort: 5000  # Will route traffic to user-management service
-      name: fun-food-times-user-management-service
-  type: LoadBalancer  # Expose this service externally via the LoadBalancer
