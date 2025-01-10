@@ -8,7 +8,7 @@ from flask_cors import CORS, cross_origin
 
 REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_address, user_type) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
 GET_USER_BY_EMAIL = "SELECT * FROM users WHERE user_email = %s"
-GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = %d"
+GET_USER_BY_ID = "SELECT * FROM users WHERE user_id = %s"
 GET_USERT_TYPE_ID = "SELECT id FROM user_types WHERE type = %s"
 load_dotenv()
 
