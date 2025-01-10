@@ -35,44 +35,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-user-management
+  name: fun-food-times-user-management-service
 spec:
   selector:
-    app: fun-food-times-user-management # Match the labels in your Deployment
+    app: fun-food-times-user-management
   ports:
     - protocol: TCP
-      port: 80        # Service's port (used by Ingress)
-      targetPort: 5000 # Port exposed by the containers
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: user-management-ingress
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: 
-      http:
-        paths:
-          - path: /fun-food-times-user-management/api/login
-            pathType: Exact
-            backend:
-              service:
-                name: fun-food-times-user-management
-                port:
-                  number: 80
-          - path: /fun-food-times-user-management/api/register
-            pathType: Exact
-            backend:
-              service:
-                name: fun-food-times-user-management
-                port:
-                  number: 80
-          - path: /fun-food-times-user-management/api/getUserInfo
-            pathType: Prefix
-            backend:
-              service:
-                name: fun-food-times-user-management
-                port:
-                  number: 80
+      port: 5000        
+      targetPort: 5000 
+  type: LoadBalancer
