@@ -35,25 +35,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-lm
+  name: fun-food-times-user-management
 spec:
-  type: LoadBalancer
-  ports:
-    - name: user
-      port: 5000
-      protocol: TCP
-      targetPort: 5000
-    - name: order
-      port: 5001
-      protocol: TCP
-      targetPort: 5001
-    - name: reservation
-      port: 5002
-      protocol: TCP
-      targetPort: 5002
-    - name: restaurant
-      port: 5003
-      protocol: TCP
-      targetPort: 5003
   selector:
-    app: fun-food-times-user-management
+    app: fun-food-times-user-management # Match the labels in your Deployment
+  ports:
+    - protocol: TCP
+      port: 80        # Service's port (used by Ingress)
+      targetPort: 5000 # Port exposed by the containers
