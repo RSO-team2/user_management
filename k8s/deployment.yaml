@@ -39,7 +39,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - name: user
+    - name: http
       port: 5000
       protocol: TCP
       targetPort: 5000
