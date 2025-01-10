@@ -52,7 +52,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: "157.230.78.60"
+    - host: 
       http:
         paths:
           - path: /fun-food-times-user-management/api/login
