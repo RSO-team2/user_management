@@ -35,7 +35,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fun-food-times-lm
+  name: fun-food-times-lm1
 spec:
   type: LoadBalancer
   ports:
@@ -43,17 +43,5 @@ spec:
       port: 5000
       protocol: TCP
       targetPort: 5000
-    - name: order
-      port: 5001
-      protocol: TCP
-      targetPort: 5001
-    - name: reservation
-      port: 5002
-      protocol: TCP
-      targetPort: 5002
-    - name: restaurant
-      port: 5003
-      protocol: TCP
-      targetPort: 5003
   selector:
     app: fun-food-times-user-management
