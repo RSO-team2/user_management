@@ -56,5 +56,5 @@ spec:
     - protocol: TCP
       port: 5000          # Port on the external LoadBalancer (this is what you'll access)
       targetPort: 5000  # Will route traffic to user-management service
-      name: fun-food-times-user-management
+      name: fun-food-times-user-management-service
   type: LoadBalancer  # Expose this service externally via the LoadBalancer
