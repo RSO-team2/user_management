@@ -56,11 +56,12 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
 spec:
+  ingressClassName: nginx
   rules:
-    - host: king-prawn-app-iog8u.ondigitalocean.app
+    - host: 
       http:
         paths:
-          - path: /user-management
+          - path: /fun-food-times-user-management
             pathType: Prefix
             backend:
               service:
