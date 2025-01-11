@@ -4,6 +4,7 @@ import bcrypt
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from prometheus_flask_exporter import PrometheusMetrics
 
 
 REGISTER_USER = "INSERT INTO users (user_name, user_email, user_password, user_address, user_type) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
@@ -15,6 +16,11 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
+# Attach Prometheus metrics to the Flask app
+metrics = PrometheusMetrics(app)
+
+# Automatically collect standard metrics like request count, response duration, and more
+metrics.info('app_info', 'Restaurant Management API Info', version='1.0.0')
 
 def check_database_connection():
     try:
