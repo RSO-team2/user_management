@@ -101,8 +101,9 @@ def get_user_info():
         user_name = user[1]
         user_email = user[2]
         user_address = user[4]
+        user_type = user[5]
         return jsonify(
-            {"user_name": user_name, "user_email": user_email, "adress": user_address}
+            {"user_name": user_name, "user_email": user_email, "adress": user_address, "user_type": user_type}
         )
 
 
