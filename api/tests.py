@@ -146,7 +146,7 @@ class TestAuthAPI(unittest.TestCase):
         mock_cursor.__enter__.return_value = mock_cursor
         
         # Mock user data
-        mock_cursor.fetchone.return_value = (1, "Test User", "test@example.com", "hashed_password", "123 Test St", 1)
+        mock_cursor.fetchone.return_value = (1, "Test User", "test@example.com", "hashed_password", "123 Test St", 1, None)
 
         response = self.app.get('/api/getUserInfo?user_id=1')
         
@@ -156,6 +156,7 @@ class TestAuthAPI(unittest.TestCase):
         self.assertEqual(response_data['user_email'], "test@example.com")
         self.assertEqual(response_data['adress'], "123 Test St")
         self.assertEqual(response_data['user_type'], 1)
+        self.assertEqual(response_data['restaurant_id'], None)
 
     @patch('psycopg2.connect')
     def test_get_user_info_not_found(self, mock_connect):
@@ -176,6 +177,32 @@ class TestAuthAPI(unittest.TestCase):
         response_data = json.loads(response.data)
         self.assertIn('error', response_data)
         self.assertEqual(response_data['error'], 'User not found')
+
+    @patch('psycopg2.connect')
+    def test_link_restaurant_success(self, mock_connect):
+        # Mock database connection
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connect.return_value = mock_conn
+        mock_conn.__enter__.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+        mock_cursor.__enter__.return_value = mock_cursor
+        
+        # Mock user data
+        mock_cursor.fetchone.return_value = None
+
+        test_data = {
+            "user_id": 1,
+            "restaurant_id": 1
+        }
+
+        response = self.app.post('/api/link_restaurant',
+                               data=json.dumps(test_data),
+                               content_type='application/json')
+        
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.data)
+        self.assertEqual(response_data['message'], "Restaurant linked to user")
 
 if __name__ == '__main__':
     unittest.main()
