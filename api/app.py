@@ -50,7 +50,7 @@ def register_user():
                 (user_name, user_email, hashed_password, user_address, user_type),
             )
             user_id = cursor.fetchone()[0]
-    return jsonify({"user_id": user_id, "Message": f"User  {user_name} created."}), 201
+    return jsonify({"user_id": user_id, "user_type": user_type, "Message": f"User  {user_name} created."}), 201
 
 
 @app.post("/api/login")
@@ -77,7 +77,7 @@ def login_user():
         )
 
         if is_pass_matching:
-            return jsonify({"message": "Login successful", "user_id": user[0]}), 200
+            return jsonify({"message": "Login successful", "user_id": user[0], "user_type": user[5]}), 200
         else:
             return jsonify({"error": "Invalid credentials"}), 401
 
