@@ -24,7 +24,7 @@ spec:
           name: fun-food-times-user-management
           ports:
             - containerPort: 5000
-           livenessProbe:
+          livenessProbe:
             httpGet:
               path: /health
               port: 5000
