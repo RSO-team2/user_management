@@ -15,24 +15,29 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
+
 def check_database_connection():
     try:
         # Connect to your PostgreSQL database
         connection = psycopg2.connect(os.getenv("DATABASE_URL"))
         cursor = connection.cursor()
-        cursor.execute('SELECT 1')  # Simple query to check if the database is responsive
+        cursor.execute(
+            "SELECT 1"
+        )  # Simple query to check if the database is responsive
         connection.close()
         print("Database is connected!")
     except OperationalError as err:
         raise Exception("Database is not reachable: " + str(err))
 
-@app.route('/health')
+
+@app.route("/health")
 def health_check():
     try:
         check_database_connection()
         return "Service is healthy", 200
     except:
         return "Service is unhealthy", 500
+
 
 @app.post("/api/register")
 @cross_origin()
@@ -58,7 +63,7 @@ def register_user():
                 return {
                     "error": "Email already exists. Please use a different email."
                 }, 400
-            
+
             cursor.execute(GET_USERT_TYPE_ID, (user_type,))
             user_type = cursor.fetchone()[0]
             if not user_type:
@@ -69,7 +74,34 @@ def register_user():
                 (user_name, user_email, hashed_password, user_address, user_type),
             )
             user_id = cursor.fetchone()[0]
-    return jsonify({"user_id": user_id, "user_type": user_type, "Message": f"User  {user_name} created."}), 201
+    return (
+        jsonify(
+            {
+                "user_id": user_id,
+                "user_type": user_type,
+                "Message": f"User  {user_name} created.",
+            }
+        ),
+        201,
+    )
+
+
+@app.post("/api/link_restaurant")
+@cross_origin()
+def link_restaurant():
+    data = request.get_json()
+    user_id = data["user_id"]
+    restaurant_id = data["restaurant_id"]
+
+    connection = psycopg2.connect(os.getenv("DATABASE_URL"))
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "UPDATE users SET restaurant_id = %s WHERE user_id = %s",
+                (restaurant_id, user_id),
+            )
+
+    return jsonify({"message": "Restaurant linked to user"}), 200
 
 
 @app.post("/api/login")
@@ -96,7 +128,16 @@ def login_user():
         )
 
         if is_pass_matching:
-            return jsonify({"message": "Login successful", "user_id": user[0], "user_type": user[5]}), 200
+            return (
+                jsonify(
+                    {
+                        "message": "Login successful",
+                        "user_id": user[0],
+                        "user_type": user[5],
+                    }
+                ),
+                200,
+            )
         else:
             return jsonify({"error": "Invalid credentials"}), 401
 
@@ -121,8 +162,15 @@ def get_user_info():
         user_email = user[2]
         user_address = user[4]
         user_type = user[5]
+        restaurant_id = user[6]
         return jsonify(
-            {"user_name": user_name, "user_email": user_email, "adress": user_address, "user_type": user_type}
+            {
+                "user_name": user_name,
+                "user_email": user_email,
+                "adress": user_address,
+                "user_type": user_type,
+                "restaurant_id": restaurant_id,
+            }
         )
 
 
