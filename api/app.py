@@ -53,7 +53,7 @@ def register_user():
     return jsonify({"user_id": user_id, "Message": f"User  {user_name} created."}), 201
 
 
-@app.post("/api/login", methods=["POST"])
+@app.post("/api/login")
 @cross_origin()
 def login_user():
     data = request.get_json()
