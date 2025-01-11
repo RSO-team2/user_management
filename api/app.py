@@ -15,7 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
-@app.post("/api/register", methods=["POST"])
+@app.post("/api/register")
 @cross_origin()
 def register_user():
     data = request.get_json()
@@ -82,10 +82,9 @@ def login_user():
             return jsonify({"error": "Invalid credentials"}), 401
 
 
-@app.post("/api/getUserInfo", methods=["GET"])
+@app.get("/api/getUserInfo")
 @cross_origin()
 def get_user_info():
-    data = request.get_json()
     user_id = request.args.get("user_id")
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
