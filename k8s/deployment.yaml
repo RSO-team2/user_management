@@ -24,13 +24,28 @@ spec:
           name: fun-food-times-user-management
           ports:
             - containerPort: 5000
+           livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+
           env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: database-url-secret
                   key: DATABASE_URL
-
+         
 ---
 apiVersion: v1
 kind: Service
