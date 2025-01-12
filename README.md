@@ -8,10 +8,10 @@ The API serves as the dedicated microservice for interaction with users database
 
 ### Use-Cases
 
-1. Add a new user into the database.
+1. Add a new user into the database (customer or restaurant type).
 2. Login user by checking the password.
 3. Retrieve users' additional information.
-3. > **Others Not Yet Implemented** 
+4. Link the newly made restaurant to restaurant in restaurants table.  
 
 ## Developer Setup
 
@@ -25,7 +25,6 @@ In order to develop and run this use-case, you have to do the following:
     - [Build and Deploy Your First Image to Your First Cluster](https://docs.digitalocean.com/products/kubernetes/getting-started/deploy-image-to-cluster/)
     - [Set up CI/CD using GitHub Actions](https://docs.digitalocean.com/products/container-registry/how-to/enable-push-to-deploy/)
 - When you have completed the steps above, the API will be deployed to your Digital Ocean account when you commit any changes and you can start using it.
-- Configur
 
 ## Checklist
 
