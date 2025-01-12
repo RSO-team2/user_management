@@ -26,15 +26,3 @@ In order to develop and run this use-case, you have to do the following:
     - [Set up CI/CD using GitHub Actions](https://docs.digitalocean.com/products/container-registry/how-to/enable-push-to-deploy/)
 - When you have completed the steps above, the API will be deployed to your Digital Ocean account when you commit any changes and you can start using it.
 
-## Checklist
-
-Service Completion Checklist
-  - [ ] Documentation (specific documentation)
-    - [ ] Inputs and outputs
-    - [ ] Types management
-  - [x] READMEs (general documentation)
-    - [x] Purpose
-    - [ ] Use-cases
-  - [x] CI/CD Pipeline
-  - [x] Cloud deployment
-

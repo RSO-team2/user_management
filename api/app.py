@@ -16,13 +16,14 @@ load_dotenv()
 app = Flask(__name__)
 cors = CORS(app)
 
-# Attach Prometheus metrics to the Flask app
 metrics = PrometheusMetrics(app)
-
-# Automatically collect standard metrics like request count, response duration, and more
 metrics.info('app_info', 'Restaurant Management API Info', version='1.0.0')
 
 def check_database_connection():
+    """
+    Checks if the database connection is active and operational.
+    Raises an exception if the database is not reachable.
+    """
     try:
         # Connect to your PostgreSQL database
         connection = psycopg2.connect(os.getenv("DATABASE_URL"))
@@ -38,6 +39,12 @@ def check_database_connection():
 
 @app.route("/health")
 def health_check():
+    """
+    Health check endpoint to verify the service's status.
+    Returns:
+        - "Service is healthy" with a 200 status if the database connection is operational.
+        - "Service is unhealthy" with a 500 status if the connection check fails.
+    """
     try:
         check_database_connection()
         return "Service is healthy", 200
@@ -48,6 +55,13 @@ def health_check():
 @app.post("/api/register")
 @cross_origin()
 def register_user():
+    """
+    Registers a new user in the system.
+    Validates input, hashes the user's password, and inserts the new user into the database.
+    Returns:
+        - Success: JSON object with the user's ID, type, and success message (status 201).
+        - Failure: JSON object with an error message if the email already exists or user type is invalid.
+    """
     data = request.get_json()
     user_name = data["user_name"]
     user_email = data["user_email"]
@@ -95,6 +109,11 @@ def register_user():
 @app.post("/api/link_restaurant")
 @cross_origin()
 def link_restaurant():
+    """
+    Links a restaurant to a user by updating the user's record in the database.
+    Returns:
+        - Success: JSON object with a success message (status 200).
+    """
     data = request.get_json()
     user_id = data["user_id"]
     restaurant_id = data["restaurant_id"]
@@ -113,6 +132,12 @@ def link_restaurant():
 @app.post("/api/login")
 @cross_origin()
 def login_user():
+    """
+    Authenticates a user by validating their email and password.
+    Returns:
+        - Success: JSON object with a success message, user ID, and user type (status 200).
+        - Failure: JSON object with an error message if the user is not found or credentials are invalid.
+    """
     data = request.get_json()
     user_email = data["user_email"]
     user_password = data["user_password"]
@@ -151,6 +176,12 @@ def login_user():
 @app.get("/api/getUserInfo")
 @cross_origin()
 def get_user_info():
+    """
+    Retrieves information about a specific user based on their user ID.
+    Returns:
+        - Success: JSON object with user details such as name, email, address, type, and linked restaurant (status 200).
+        - Failure: JSON object with an error message if the user is not found (status 404).
+    """
     user_id = request.args.get("user_id")
 
     connection = psycopg2.connect(os.getenv("DATABASE_URL"))
